@@ -72,28 +72,27 @@ app.add_middleware(
     max_age=3600,
 )
 
-# Mount static files directory to serve React build files
-# Mount assets directory so /assets/... requests work directly (React build expects this)
-# This directory should be built during docker deployment
-app.mount("/assets", StaticFiles(directory="static/assets"), name="assets")
+ENV = os.getenv("ENV", "development")
 
-# Mount main static files for favicon and other root-level static files
-# This allows /2020LBL_Favicon.ico to be served directly
+if ENV != "development": 
+    # Mount static files directory to serve React build files
+    # Mount assets directory so /assets/... requests work directly (React build expects this)
+    # This directory should be built during docker deployment
+    app.mount("/assets", StaticFiles(directory="static/assets"), name="assets")
 
-# Create a custom static file handler for root-level files
-@app.get("/2020LBL_Favicon.ico")
-async def favicon():
-    from fastapi.responses import FileResponse
-    return FileResponse("static/2020LBL_Favicon.ico")
+    # Mount main static files for favicon and other root-level static files
+    # This allows /2020LBL_Favicon.ico to be served directly
 
-@app.get("/2020-Favicon-Template-228x228_v3.png")  
-async def favicon_png():
-    from fastapi.responses import FileResponse
-    return FileResponse("static/2020-Favicon-Template-228x228_v3.png")
+    # Create a custom static file handler for root-level files
+    @app.get("/2020LBL_Favicon.ico")
+    async def favicon():
+        from fastapi.responses import FileResponse
+        return FileResponse("static/2020LBL_Favicon.ico")
 
-
-
-
+    @app.get("/2020-Favicon-Template-228x228_v3.png")  
+    async def favicon_png():
+        from fastapi.responses import FileResponse
+        return FileResponse("static/2020-Favicon-Template-228x228_v3.png")
 
 
 ######################## End FastAPI server block ##############################
