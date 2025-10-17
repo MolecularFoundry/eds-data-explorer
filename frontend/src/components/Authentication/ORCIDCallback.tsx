@@ -21,7 +21,7 @@
  */
 
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Box, CircularProgress, Typography, Alert } from '@mui/material';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -33,7 +33,8 @@ import { useAuth } from '../../contexts/AuthContext';
  */
 function ORCIDCallback() {
   const [searchParams] = useSearchParams();
-  const { handleORCIDCallback } = useAuth();
+  const { handleORCIDCallback, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [error, setError] = useState<string>('');
   const [, setIsProcessing] = useState(true);
   const [codeProcessed, setCodeProcessed] = useState<string | null>(null);
@@ -103,8 +104,12 @@ function ORCIDCallback() {
       }
     };
 
-    processCallback();
-  }, [searchParams, handleORCIDCallback]);
+    if (isAuthenticated){
+      navigate("/", { replace: true });
+    } else {
+      processCallback();
+    }
+  }, [handleORCIDCallback, isAuthenticated]);
 
   // Show error state
   if (error) {
