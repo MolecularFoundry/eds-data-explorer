@@ -75,6 +75,8 @@ function ORCIDCallback() {
           throw new Error('No authorization code received from ORCID');
         }
 
+        setCodeProcessed(code); // prevent re-render
+
         // PREVENT CODE REUSE:
         // If we've already processed this exact code, don't process it again
         if (codeProcessed === code) {
