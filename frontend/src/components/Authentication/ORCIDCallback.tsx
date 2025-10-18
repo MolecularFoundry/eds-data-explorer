@@ -20,7 +20,7 @@
  * END RESULT: User is logged in with real ORCID data
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Box, CircularProgress, Typography, Alert } from '@mui/material';
 import { useAuth } from '../../contexts/AuthContext';
@@ -37,7 +37,7 @@ function ORCIDCallback() {
   const navigate = useNavigate();
   const [error, setError] = useState<string>('');
   const [, setIsProcessing] = useState(true);
-  const [codeProcessed, setCodeProcessed] = useState<string | null>(null);
+  const hasProcessedRef = useRef(false);
 
   useEffect(() => {
     const processCallback = async () => {
@@ -75,15 +75,6 @@ function ORCIDCallback() {
           throw new Error('No authorization code received from ORCID');
         }
 
-        setCodeProcessed(code); // prevent re-render
-
-        // PREVENT CODE REUSE:
-        // If we've already processed this exact code, don't process it again
-        if (codeProcessed === code) {
-          console.log('This authorization code has already been processed, skipping...');
-          return;
-        }
-
         console.log('Valid authorization code received, calling handleORCIDCallback...');
         
         // SUCCESS! PROCESS THE CODE:
@@ -91,13 +82,8 @@ function ORCIDCallback() {
         // This will: send code to backend → get user data → store user → login complete
         await handleORCIDCallback(code);
         
-        // MARK CODE AS PROCESSED:
-        // This prevents the same code from being processed multiple times
-        setCodeProcessed(code);
-        
         console.log('ORCID callback handling completed successfully!');
 
-        // AuthContext handles redirect to main app after success
       } catch (err) {
         console.error('ORCID callback error:', err);
         setError(err instanceof Error ? err.message : 'Authentication failed');
@@ -106,9 +92,15 @@ function ORCIDCallback() {
       }
     };
 
-    if (isAuthenticated){
+    if (isAuthenticated) {
+      // route away if already authenticated 
+      console.log("OrcidCallback: Already authenticated")
       navigate("/", { replace: true });
+    } else if (hasProcessedRef.current) { 
+      // don't call processCallback if already run
+      console.log("handleORCIDCallback already called")
     } else {
+      hasProcessedRef.current = true; 
       processCallback();
     }
   }, [handleORCIDCallback, isAuthenticated]);
