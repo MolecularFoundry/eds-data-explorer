@@ -28,7 +28,7 @@ COPY backend/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy backend source code
-COPY backend/ ./
+# COPY backend/ ./ # prevent double copying backend
 
 # Copy backend and built frontend
 COPY backend/ ./backend/
