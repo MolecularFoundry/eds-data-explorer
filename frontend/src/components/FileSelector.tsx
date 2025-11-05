@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FormControl, InputLabel, Select, MenuItem, Box, Typography } from '@mui/material';
 import { getFiles } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 
 interface FileSelectorProps {
   selectedFile: string;
@@ -19,11 +20,16 @@ interface FileSelectorProps {
 function FileSelector({ selectedFile, onFileSelect }: FileSelectorProps) {
   const [files, setFiles] = useState<string[]>([]);
   const [error, setError] = useState<string>('');
+  const { user } = useAuth()
 
   useEffect(() => {
     const fetchFiles = async () => {
       try {
-        const fileList = await getFiles();  
+        var fileList: string[] = []
+        if (user && user.orcidId) {
+          // fileList = await getFiles(user.orcidId);  
+          fileList = await getFiles("");  
+        }
         setFiles(fileList);
         setError('');
       } catch (err) {
@@ -33,7 +39,7 @@ function FileSelector({ selectedFile, onFileSelect }: FileSelectorProps) {
     };
 
     fetchFiles();
-  }, []);
+  }, [user]);
 
   const result = (
     <Box sx={{ width: '100%', mb: 2 }}>

@@ -2,8 +2,9 @@ from operations import periodic_table_functions
 from operations import data_functions
 
 class DataService:
-    def __init__(self, file_service):
+    def __init__(self, file_service, crucible_client):
         self.file_service = file_service
+        self.crucible_client = crucible_client
 
     def get_emission_spectra(self, atomic_number: int):
         """

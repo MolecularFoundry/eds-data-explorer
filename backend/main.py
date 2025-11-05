@@ -144,11 +144,11 @@ Returns: List of filenames
 Called by: Frontend getFiles() function
 """
 @app.get("/files")
-async def get_file_list():
+async def get_file_list(orcidId: str = Query(...)):
     print("\n=== Starting get_file_list() ===")
     log_call("/files")
     try:
-        files = file_service.list_files()
+        files = file_service.list_files(orcidId)
         print("=== Ending get_file_list() in main.py ===\n")
         return JSONResponse(content=files)
     except Exception as e:

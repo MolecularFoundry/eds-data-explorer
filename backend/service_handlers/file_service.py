@@ -14,17 +14,14 @@ class FileService:
     Manages file loading, listing, and metadata extraction.
     """
     
-    def __init__(self):
+    def __init__(self, crucible_client):
         self._supported_extensions = ('.emd', '.tif', '.dm3', '.dm4', '.ser', '.emi')
         self._current_file = {
             "filepath": None,
             "data": None
         }
 
-        self.client = CrucibleClient(
-            api_url="https://crucible.lbl.gov/testapi",
-            api_key= os.getenv("CRUCIBLE_API_KEY")
-        )
+        self.crucible_client = crucible_client
 
     def list_files(self, orcid_id = None) -> list:
         """
@@ -38,9 +35,9 @@ class FileService:
             # files = file_functions.list_files()
 
             if orcid_id: # not used yet -- need to check s
-                files = self.client.list_datasets(owner_orcid=orcid_id)
+                files = self.crucible_client.list_datasets(owner_orcid=orcid_id)
             else: 
-                files = self.client.list_datasets()
+                files = self.crucible_client.list_datasets()
 
             filenames = [f"{file['unique_id']}: {file['dataset_name'] if 'dataset_name' in file else ''}" for file in files]
             print("=== Ending list_files in FileService ===\n")

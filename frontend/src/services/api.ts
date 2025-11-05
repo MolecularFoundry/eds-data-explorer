@@ -40,6 +40,14 @@ const api = axios.create({
   withCredentials: false
 });
 
+const crucible_api = axios.create({
+  baseURL: "https://crucible.lbl.gov/testapi/",
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  },
+});
+
 /**************************************************************************/
 /********************** API Endpoint Functions ****************************/
  // These functions make HTTP requests to the FastAPI backend endpoints.
@@ -56,9 +64,12 @@ const api = axios.create({
  * Calls: GET http://localhost:8000/files
  * Returns: Array of filenames
  */
-export const getFiles = async () => {
+export const getFiles = async (orcidId: string) => {
   try {
-    const response = await api.get('/files');
+    const response = await api.get('/files', {
+      params: {orcidId}
+    }); 
+    // const response = await crucible_api.get('/datasets');
     return response.data;
   } catch (error) {
     console.error('Error fetching files:', error);
