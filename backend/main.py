@@ -42,8 +42,9 @@ from external_services import orcid_service
 print("=== ORCID SERVICE IMPORTED SUCCESSFULLY ===")
 from operations import periodic_table_functions
 from pydantic import BaseModel
+from dotenv import load_dotenv
 
-
+load_dotenv()
 
 ######################## Begin FastAPI server block ##############################
 

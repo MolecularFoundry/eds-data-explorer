@@ -3,7 +3,10 @@ from operations import file_functions
 from utils import constants
 import os
 from typing import Any
+from pycrucible import CrucibleClient
+from dotenv import load_dotenv
 
+load_dotenv()
 
 class FileService:
     """
@@ -18,7 +21,12 @@ class FileService:
             "data": None
         }
 
-    def list_files(self) -> list:
+        self.client = CrucibleClient(
+            api_url="https://crucible.lbl.gov/testapi",
+            api_key= os.getenv("CRUCIBLE_API_KEY")
+        )
+
+    def list_files(self, orcid_id = None) -> list:
         """
         List all supported microscopy files in the data directory.
         
@@ -27,9 +35,16 @@ class FileService:
         """
         try:
             print(f"\n=== Starting list_files in FileService ===")
-            files = file_functions.list_files()
+            # files = file_functions.list_files()
+
+            if orcid_id: # not used yet -- need to check s
+                files = self.client.list_datasets(owner_orcid=orcid_id)
+            else: 
+                files = self.client.list_datasets()
+
+            filenames = [f"{file['unique_id']}: {file['dataset_name'] if 'dataset_name' in file else ''}" for file in files]
             print("=== Ending list_files in FileService ===\n")
-            return files
+            return filenames
         except Exception as e:
             print(f"Error listing files: {str(e)}")
             raise e

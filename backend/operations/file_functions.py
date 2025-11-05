@@ -5,8 +5,6 @@ import time
 import gc
 from typing import Any
 
-
-
 def list_files():
     """
 Lists all supported microscopy files in the sample_data directory.
@@ -36,9 +34,6 @@ Returns:
         print(f"Error accessing directory {constants.DATA_DIR}: {str(e)}")
         print("\nReturning empty list from list_files() in file_functions.py")
         return []
-
-
-
 
 def get_cached_file(file_path, signal_idx=None):
     print("\n=== Starting get_cached_file() in file_functions.py ===")
