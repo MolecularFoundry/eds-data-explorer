@@ -32,14 +32,17 @@ class FileService:
         """
         try:
             print(f"\n=== Starting list_files in FileService ===")
-            # files = file_functions.list_files()
+            # by default, only include public datasets 
+            files = self.crucible_client.list_datasets(public=True)
 
-            if orcid_id: # not used yet -- need to check s
-                files = self.crucible_client.list_datasets(owner_orcid=orcid_id)
-            else: 
-                files = self.crucible_client.list_datasets()
+            if orcid_id:
+                user_files = self.crucible_client.list_datasets(owner_orcid=orcid_id)
+                files.extend(user_files)
 
-            filenames = [f"{file['unique_id']}: {file['dataset_name'] if 'dataset_name' in file else ''}" for file in files]
+            filenames = [f"{file['dataset_name']} ({file['unique_id']})" for file in files]
+
+            # testing: still include local files 
+            filenames.extend(file_functions.list_files())
             print("=== Ending list_files in FileService ===\n")
             return filenames
         except Exception as e:

@@ -27,8 +27,7 @@ function FileSelector({ selectedFile, onFileSelect }: FileSelectorProps) {
       try {
         var fileList: string[] = []
         if (user && user.orcidId) {
-          // fileList = await getFiles(user.orcidId);  
-          fileList = await getFiles("");  
+          fileList = await getFiles(user.orcidId);  
         }
         setFiles(fileList);
         setError('');
