@@ -361,13 +361,13 @@ function MainApplication({
                     position: 'relative',
                     overflow: 'auto',
                     display: 'flex',
-                    alignItems: 'center',  // Changed to center
-                    justifyContent: 'center',
+                    alignItems: 'flexStart',  // prev: center
+                    justifyContent: 'flexStart', // prev: center
                     p: 2
                   }}>
                     <Box sx={{
                       transform: 'scale(0.8)',  // Scale down to 80%
-                      transformOrigin: 'center center'  // Scale from center
+                      transformOrigin: 'center top'  // Scale from center
                     }}>
                       <PeriodicTable />
                     </Box>
