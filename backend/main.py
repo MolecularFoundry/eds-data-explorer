@@ -42,7 +42,9 @@ from external_services import orcid_service
 print("=== ORCID SERVICE IMPORTED SUCCESSFULLY ===")
 from operations import periodic_table_functions
 from pydantic import BaseModel
+from typing import List #, Any, Dict, Union
 from dotenv import load_dotenv
+from utils import constants
 
 load_dotenv()
 
@@ -143,14 +145,14 @@ Lists all .emd files in the sample_data directory
 Returns: List of filenames
 Called by: Frontend getFiles() function
 """
-@app.get("/files")
+@app.get("/files", response_model=List[constants.DatasetRead])
 async def get_file_list(orcidId: str = Query(...)):
     print("\n=== Starting get_file_list() ===")
     log_call("/files")
     try:
         files = file_service.list_files(orcidId)
         print("=== Ending get_file_list() in main.py ===\n")
-        return JSONResponse(content=files)
+        return files  # previously: JSONResponse(content=files)
     except Exception as e:
         print(f"ERROR in get_file_list(): {str(e)}")
         print("=== Ending get_file_list() in main.py with error ===\n")

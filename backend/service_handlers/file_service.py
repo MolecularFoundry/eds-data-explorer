@@ -3,7 +3,6 @@ from operations import file_functions
 from utils import constants
 import os
 from typing import Any
-from pycrucible import CrucibleClient
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -39,12 +38,16 @@ class FileService:
                 user_files = self.crucible_client.list_datasets(owner_orcid=orcid_id)
                 files.extend(user_files)
 
-            filenames = [f"{file['dataset_name']} ({file['unique_id']})" for file in files]
+            # filter by supported_extensions
+            supported_extensions = ('emd') # ('emd', 'tif', 'dm3', 'dm4', 'ser', 'emi') 
+            files = [file for file in files if file['data_format'] in supported_extensions]
 
-            # testing: still include local files 
-            filenames.extend(file_functions.list_files())
+            file_objs = [constants.DatasetRead(datasetName=file['dataset_name'], creationTime=file['creation_time'], dsid=file['unique_id']) for file in files]
+
+            # FOR TESTING: include local files
+            file_objs.extend([constants.DatasetRead(datasetName=filename, creationTime="", dsid=filename) for filename in file_functions.list_files()])
             print("=== Ending list_files in FileService ===\n")
-            return filenames
+            return file_objs
         except Exception as e:
             print(f"Error listing files: {str(e)}")
             raise e
@@ -93,7 +96,11 @@ class FileService:
             print(f"Full filepath: {filepath}")
             
             if not os.path.exists(filepath):
-                raise ValueError(f"File does not exist: {filepath}")
+                dsid = filename
+                filepath = constants.full_filepath(dsid) # copied for now, but edit if necessary
+                print(f"Downloading dataset: {dsid}")
+                self.crucible_client.download_dataset(dsid, output_path=filepath) # NOT WORKING 
+                # raise ValueError(f"File does not exist: {filepath}")
         
             signal = file_functions.get_cached_file(filepath, signal_idx)
             
@@ -107,11 +114,4 @@ class FileService:
             import traceback
             traceback.print_exc()
             raise
-
-
-
-
-
-
-
 

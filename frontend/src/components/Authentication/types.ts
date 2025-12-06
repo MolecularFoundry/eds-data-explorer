@@ -62,3 +62,12 @@ export interface AuthContextState {
   handleORCIDCallback: (code: string) => Promise<void>;
   logout: () => void;
 }
+
+/**
+ * Dataset recieved from Crucible
+ */
+export interface Dataset {
+  dsid: string; 
+  datasetName: string; 
+  creationTime: string; 
+}

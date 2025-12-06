@@ -1,10 +1,13 @@
 import os
+from pydantic import BaseModel
+from typing import List
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(BASE_DIR, "sample_data")
 
 CURRENT_FILE = {
     "filepath": None,
+    "dsid": None, 
     "data": None
 }
 
@@ -36,4 +39,15 @@ def get_cached_file(filepath, signal_idx=None):
     print("No cached file found")
     return None
 
-
+class DatasetRead(BaseModel):
+    """
+    Request model for listing Datasets for "Select File"
+    
+    Attributes:
+        dsid: the dataset's unique_id
+        dataset_name: dataset's dataset_name
+        creation_time: dataset's creation_time
+    """
+    dsid: str
+    datasetName: str
+    creationTime: str
