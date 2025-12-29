@@ -10,6 +10,7 @@ interface FileSelectorProps {
 }
 
 const formatDatasetName = (dataset: Dataset) => {
+  // local files will have empty sring as the creationTime attribute 
   const date = dataset.creationTime 
     ? `(${dataset.creationTime.slice(0, 10)} ${dataset.creationTime.slice(11, 19)})` 
     : '';  // remove T and miliseconds 
@@ -36,10 +37,8 @@ function FileSelector({ selectedFile, onFileSelect }: FileSelectorProps) {
         var fileList: Dataset[] = []
         if (user && user.orcidId) {
           fileList = await getFiles(user.orcidId);  
-          // fileList.map(file => {dsid: file[0], filename: file[1]})
         }
         setFiles(fileList)
-        // setFiles(fileList.map(file => {dsid: file[0], filename: file[1]}));
         setError('');
       } catch (err) {
         setError(`Error fetching files: ${(err as Error).message}`);

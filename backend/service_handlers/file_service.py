@@ -25,9 +25,13 @@ class FileService:
     def list_files(self, orcid_id = None) -> list:
         """
         List all supported microscopy files in the data directory.
+
+        Args: 
+            orcid_id (optional): user's orcid_id, for extracting user-specific datasets from crucible 
         
         Returns:
-            list: List of filenames with supported extensions
+            list: List of DatasetRead objects (filename, creationTime, unique_id)
+                  Metadata from Crucible datasets of supported extensions (currently only .emd) that are publicly available or user-specific. 
         """
         try:
             print(f"\n=== Starting list_files in FileService ===")
@@ -44,7 +48,7 @@ class FileService:
 
             file_objs = [constants.DatasetRead(datasetName=file['dataset_name'], creationTime=file['creation_time'], dsid=file['unique_id']) for file in files]
 
-            # FOR TESTING: include local files
+            # FOR TESTING: include local files (set creationTime as empty string) 
             file_objs.extend([constants.DatasetRead(datasetName=filename, creationTime="", dsid=filename) for filename in file_functions.list_files()])
             print("=== Ending list_files in FileService ===\n")
             return file_objs
@@ -95,11 +99,14 @@ class FileService:
             filepath = constants.full_filepath(filename)
             print(f"Full filepath: {filepath}")
             
+            # ensure the file exists before 
             if not os.path.exists(filepath):
                 dsid = filename
                 filepath = constants.full_filepath(dsid) # copied for now, but edit if necessary
                 print(f"Downloading dataset: {dsid}")
                 self.crucible_client.download_dataset(dsid, output_path=filepath) # NOT WORKING 
+                # TODO: error check file doesn't exist in storage container 
+
                 # raise ValueError(f"File does not exist: {filepath}")
         
             signal = file_functions.get_cached_file(filepath, signal_idx)
