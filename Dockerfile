@@ -27,8 +27,8 @@ COPY backend/requirements.txt ./
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy backend source code
-# COPY backend/ ./ # prevent double copying backend
+# Copy backend source code -- isn't this double-copying? 
+COPY backend/ ./ 
 
 # Copy backend and built frontend
 COPY backend/ ./backend/
