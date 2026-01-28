@@ -1,10 +1,20 @@
 import { useState, useEffect } from 'react';
 import { FormControl, InputLabel, Select, MenuItem, Box, Typography } from '@mui/material';
 import { getFiles } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
+import type { Dataset } from './Authentication/types';
 
 interface FileSelectorProps {
   selectedFile: string;
   onFileSelect: (filename: string) => void;
+}
+
+const formatDatasetName = (dataset: Dataset) => {
+  // local files will have empty sring as the creationTime attribute 
+  const date = dataset.creationTime 
+    ? `(${dataset.creationTime.slice(0, 10)} ${dataset.creationTime.slice(11, 19)})` 
+    : '';  // remove T and miliseconds 
+  return `${dataset.datasetName} ${date}`
 }
 
 /**
@@ -17,14 +27,18 @@ interface FileSelectorProps {
  * @param onFileSelect - Callback function when a file is selected
  */
 function FileSelector({ selectedFile, onFileSelect }: FileSelectorProps) {
-  const [files, setFiles] = useState<string[]>([]);
+  const [files, setFiles] = useState<Dataset[]>([]); // useState<string[]>([]);
   const [error, setError] = useState<string>('');
+  const { user } = useAuth()
 
   useEffect(() => {
     const fetchFiles = async () => {
       try {
-        const fileList = await getFiles();  
-        setFiles(fileList);
+        var fileList: Dataset[] = []
+        if (user && user.orcidId) {
+          fileList = await getFiles(user.orcidId);  
+        }
+        setFiles(fileList)
         setError('');
       } catch (err) {
         setError(`Error fetching files: ${(err as Error).message}`);
@@ -33,7 +47,7 @@ function FileSelector({ selectedFile, onFileSelect }: FileSelectorProps) {
     };
 
     fetchFiles();
-  }, []);
+  }, [user]);
 
   const result = (
     <Box sx={{ width: '100%', mb: 2 }}>
@@ -56,8 +70,8 @@ function FileSelector({ selectedFile, onFileSelect }: FileSelectorProps) {
           }}
         >
           {files.map((file) => (
-            <MenuItem key={file} value={file}>
-              {file}
+            <MenuItem key={file.dsid} value={file.dsid}>
+              {formatDatasetName(file)}
             </MenuItem>
           ))}
         </Select>

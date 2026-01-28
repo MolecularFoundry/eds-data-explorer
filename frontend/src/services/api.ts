@@ -56,9 +56,11 @@ const api = axios.create({
  * Calls: GET http://localhost:8000/files
  * Returns: Array of filenames
  */
-export const getFiles = async () => {
+export const getFiles = async (orcidId: string) => {
   try {
-    const response = await api.get('/files');
+    const response = await api.get('/files', {
+      params: {orcidId}
+    }); 
     return response.data;
   } catch (error) {
     console.error('Error fetching files:', error);

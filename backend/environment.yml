@@ -16,7 +16,8 @@ dependencies:
   - pip
   - pip:
     - sparse  # Required for reading EDS spectrum data from Velox EMD files
-    # - hyperspy-extensions-list  # Provides additional signal types
+    - hyperspy-extensions-list  # Provides additional signal types
     - hyperspy-gui-traitsui # hyperspy-extensions-list may be expired 
     - hyperspy-gui-ipywidgets  # Optional: for interactive features
+    # - hyperspy-exspy
     # - hyperspy-base # no matching distribution found?

@@ -36,7 +36,7 @@ const GridSection = styled(Box)({
   boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
   border: '1px solid #e0e0e0',
   backgroundColor: '#ffffff',
-  overflow: 'hidden',
+  overflow: 'auto',
   '& > *': { 
     width: '100%',
     height: '100%'
